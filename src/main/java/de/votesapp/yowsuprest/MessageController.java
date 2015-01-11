@@ -8,6 +8,7 @@ import java.util.Map;
 
 import lombok.Data;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,18 +25,24 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 @RestController
 @RequestMapping("/messages")
 public class MessageController {
-	ObjectMapper om = new ObjectMapper();
+	private final ObjectMapper om = new ObjectMapper();
+	private final YowsupConfig yowsupConfig;
+
+	@Autowired
+	public MessageController(final YowsupConfig yowsupConfig) {
+		this.yowsupConfig = yowsupConfig;
+	}
 
 	@RequestMapping(value = "/inbox", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ArrayNode readAllMessagesFromInbox() throws JsonProcessingException, IOException {
-		return readPath("/tmp/yowsup/inbox");
+		return readPath(yowsupConfig.getInboxPath());
 	}
 
 	@RequestMapping(value = "/inbox/{id}", method = RequestMethod.DELETE)
 	public Map<String, Boolean> deleteMessageFromInbox(@PathVariable final String id) throws IOException {
 		if (id.matches("[0-9]+-[0-9]+")) {
 			final Map<String, Boolean> sucess = new HashMap<>();
-			sucess.put("success", Files.deleteIfExists(Paths.get("/tmp/yowsup/inbox", id + ".jsonpickle")));
+			sucess.put("success", Files.deleteIfExists(Paths.get(yowsupConfig.getInboxPath(), id + ".jsonpickle")));
 			return sucess;
 		} else {
 			throw new IllegalArgumentException("Thats not an id!");
@@ -44,23 +51,12 @@ public class MessageController {
 
 	@RequestMapping(value = "/outbox", method = RequestMethod.POST)
 	public void sendMessage(@RequestBody final NewMessage message) throws IOException {
-		om.writeValue(Paths.get("/tmp/yowsup/outbox/", System.currentTimeMillis() + ".json").toFile(), message);
+		om.writeValue(Paths.get(yowsupConfig.getOutboxPath(), System.currentTimeMillis() + ".json").toFile(), message);
 	}
 
 	@RequestMapping(value = "/outbox", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ArrayNode readAllMessagesFromOutbox() throws JsonProcessingException, IOException {
-		return readPath("/tmp/yowsup/outbox");
-	}
-
-	@RequestMapping(value = "/outbox", method = RequestMethod.DELETE)
-	public Map<String, Boolean> deleteMessageFromOutbox(@PathVariable final String id) throws IOException {
-		if (id.matches("[0-9]+-[0-9]+")) {
-			final Map<String, Boolean> sucess = new HashMap<>();
-			sucess.put("success", Files.deleteIfExists(Paths.get("/tmp/yowsup/inbox", id + ".jsonpickle")));
-			return sucess;
-		} else {
-			throw new IllegalArgumentException("Thats not an id!");
-		}
+		return readPath(yowsupConfig.getOutboxPath());
 	}
 
 	private ArrayNode readPath(final String path) throws IOException {

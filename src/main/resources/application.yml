@@ -1,0 +1,11 @@
+server:
+    port: 8081
+    
+yowsup:
+    pythonBin: ${PYTHON_BIN:/usr/local/bin/python3}
+    yowsupCliBin: ${YOWSUPCLI_BIN:/Users/christian/PycharmProjects/yowsup/yowsup-cli}
+    phone: ${PHONE:4915770658227}
+    whatsAppBase64Password: ${PASSWORD:xxxxxxxxxxxxx=}
+    inboxPath: ${INBOX:/tmp/yowsup/inbox}
+    outboxPath: ${OUTBOX:/tmp/yowsup/outbox}
+    sentPath: ${SENT:/tmp/yowsup/sent}
