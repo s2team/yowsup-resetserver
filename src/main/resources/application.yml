@@ -1,6 +1,9 @@
 server:
     port: 8081
     
+# Springs default username is "user"
+security.user.password: ${REST_PASSWORD:user}
+    
 yowsup:
     pythonBin: ${PYTHON_BIN:/usr/local/bin/python3}
     yowsupCliBin: ${YOWSUPCLI_BIN:/Users/christian/PycharmProjects/yowsup/yowsup-cli}
