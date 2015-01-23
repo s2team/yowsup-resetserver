@@ -40,12 +40,12 @@ public class MessageController {
 
 	@RequestMapping(value = "/inbox/{id}", method = RequestMethod.DELETE)
 	public Map<String, Boolean> deleteMessageFromInbox(@PathVariable final String id) throws IOException {
-		if (id.matches("[0-9\\-\\.]+")) {
+		if (id.matches("[0-9\\-\\.\\_]+")) {
 			final Map<String, Boolean> sucess = new HashMap<>();
 			sucess.put("success", Files.deleteIfExists(Paths.get(yowsupConfig.getInboxPath(), id + ".jsonpickle")));
 			return sucess;
 		} else {
-			throw new IllegalArgumentException("Thats not an id!");
+			throw new IllegalArgumentException(id + " is not an id!");
 		}
 	}
 

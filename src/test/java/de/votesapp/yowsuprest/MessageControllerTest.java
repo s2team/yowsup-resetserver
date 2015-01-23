@@ -11,5 +11,6 @@ public class MessageControllerTest {
 	public void should_delete_with_correct_ids() throws Exception {
 		messageController.deleteMessageFromInbox("421331869-115");
 		messageController.deleteMessageFromInbox("1433501807-.-354");
+		messageController.deleteMessageFromInbox("1624121307-_-354");
 	}
 }
