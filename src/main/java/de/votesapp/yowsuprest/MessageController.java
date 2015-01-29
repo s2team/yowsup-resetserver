@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import lombok.Data;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -22,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
+@Slf4j
 @RestController
 @RequestMapping("/messages")
 public class MessageController {
@@ -38,8 +41,9 @@ public class MessageController {
 		return readPath(yowsupConfig.getInboxPath());
 	}
 
-	@RequestMapping(value = "/inbox/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/inbox/{id:.+}", method = RequestMethod.DELETE)
 	public Map<String, Boolean> deleteMessageFromInbox(@PathVariable final String id) throws IOException {
+	    log.info("Got delte request for: {}", id);
 		if (id.matches("[0-9\\-\\.\\_]+")) {
 			final Map<String, Boolean> sucess = new HashMap<>();
 			sucess.put("success", Files.deleteIfExists(Paths.get(yowsupConfig.getInboxPath(), id + ".jsonpickle")));
